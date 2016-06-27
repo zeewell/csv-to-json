@@ -18,4 +18,4 @@ To see benchmarks on your data file:
     go test -bench=.
 ```
 
-The sample data file contains 36,634 records in Florida for 2012 from a sample company that implemented an agressive growth plan in 2012. 
+The sample data file contains 36,634 records.
