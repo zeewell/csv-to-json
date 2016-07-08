@@ -3,57 +3,50 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
-	"fmt"
-	"log"
 	"os"
 )
 
-func main() {
-	csvFile, err := os.Open("./data.csv")
+//use getJson method to convert current CSV line to json object Append json object to slice
+func convert(properties []string, data []string) {
+	defer wg.Done()
+
+	c := make(chan string)
+	go func() { c <- getJson(properties, data) }()
+	obj := <-c
+	json_objs = append(json_objs, obj)
+}
+
+//construct json object based on properties
+func getJson(properties []string, data []string) string {
+	fields := map[string]string{}
+	for i, field := range properties {
+		fields[field] = data[i]
+	}
+	jsonBytes, err := json.MarshalIndent(fields, "", " ")
 	if err != nil {
-		panic(err)
+		return ""
+	}
+
+	_json := (string(jsonBytes))
+	return _json
+}
+
+//read lines in CSV return properties from first CSV line, lines, and error
+func readCSV(file_path string) ([]string, [][]string, error) {
+	csvFile, err := os.Open(file_path)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	r := csv.NewReader(csvFile)
+
 	lines, err := r.ReadAll()
 	if err != nil {
-		log.Fatalf("error reading all lines: %v", err)
+		return nil, nil, err
 	}
 
-	for i, line := range lines {
-		if i == 0 {
-			// skip header line
-			continue
-		}
+	//first line of CSV file that defines our json object properties
+	properties := lines[0]
 
-		//this is a temp csv row add the details then append it to the csv_rows slice
-		var temp CSVRow
-		temp.PolicyID = line[0]
-		temp.Statecode = line[1]
-		temp.County = line[2]
-		temp.Eq_site_limit = line[3]
-		temp.Hu_site_limit = line[4]
-		temp.Fl_site_limit = line[5]
-		temp.Fr_site_limit = line[6]
-		temp.Tiv_2011 = line[7]
-		temp.Tiv_2012 = line[8]
-		temp.Eq_site_deductible = line[9]
-		temp.Hu_site_deductible = line[10]
-		temp.Fl_site_deductible = line[11]
-		temp.Fr_site_deductible = line[12]
-		temp.Point_latitude = line[13]
-		temp.Point_longitude = line[14]
-		temp.Line = line[15]
-		temp.Construction = line[16]
-		temp.Point_granularity = line[17]
-		csv_rows = append(csv_rows, temp)
-	}
-
-	_json, err := json.Marshal(csv_rows)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-	os.Stdout.Write(_json)
-	fmt.Println("\n\n")
-
+	return properties, lines, nil
 }
