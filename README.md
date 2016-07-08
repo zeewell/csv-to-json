@@ -2,11 +2,7 @@
 Code reads in a CSV file and outputs the data into an array of json objects.
 
 ## Usage
-
-These are initial commits and code will be upgraded to make functionality more robust and intuitive.
-
-configs.json is where you would map your CSV file structure to a GO struct type
-
+Swap data.csv with the csv of your liking. Next commit will accept command line argument for csv file path, web browser file upload capability and progress. 
 To run:
 ```linux
     go build
