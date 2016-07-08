@@ -8,7 +8,7 @@ Swap data.csv with the csv of your liking. Next commit will accept command line 
 To run:
 ```linux
     go build
-    ./CSV-to-JSON
+    ./csv-to-json
 ```
 
 To see benchmarks on your data file:
